@@ -38,31 +38,16 @@ func TestComplete(t *testing.T) {
 	}
 }
 
-func TestDelete(t *testing.T) {
+func TestDeleteLast(t *testing.T) {
 	l := List{}
+	l.Add("a")
+	l.Add("b")
 
-	tasks := []string{
-		"New Task1",
-		"New Task2",
-		"New Task3",
-		"New Task4",
+	if err := l.Delete(2); err != nil {
+		t.Fatalf("Delete(2) on a 2-item list returned an error: %v", err)
 	}
-	for _, task := range tasks {
-		l.Add(task)
-	}
-
-	if l[0].Task != tasks[0] {
-		t.Errorf("Expected %q, got %q instead.", tasks[0], l[0].Task)
-	}
-	err := l.Delete(2)
-	if err != nil {
-		t.Fatalf("Delete returned an error: %v", err)
-	}
-	if len(l) != 3 {
-		t.Errorf("Expected 3 items, got %d", len(l))
-	}
-	if l[1].Task != tasks[2] {
-		t.Errorf("Expected %q, got %q instead.", tasks[2], l[1].Task)
+	if len(l) != 1 || l[0].Task != "a" {
+		t.Errorf("unexpected list after deleting last item: %v", l)
 	}
 }
 

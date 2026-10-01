@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strings"
 	"time"
 )
 
@@ -19,6 +20,23 @@ type item struct {
 
 // List represents a list of ToDo items
 type List []item
+
+// String prints out a formatted list
+// Implements the fmt.Stringer interface
+func (l *List) String() string {
+	var formatted strings.Builder
+
+	for k, t := range *l {
+		prefix := "  "
+		if t.Done {
+			prefix = "X "
+		}
+
+		// Adjust the item number k to print numbers starting from 1 instead of 0
+		formatted.WriteString(fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task))
+	}
+	return formatted.String()
+}
 
 // Add creates a new todo item and appends it to the list
 func (l *List) Add(task string) {
@@ -48,7 +66,7 @@ func (l *List) Complete(i int) error {
 // Delete method deletes a ToDo item from the list
 func (l *List) Delete(i int) error {
 	ls := *l
-	if i <= 0 || i >= len(ls) {
+	if i <= 0 || i > len(ls) {
 		return fmt.Errorf("item %d does not exist", i)
 	}
 	*l = slices.Delete(ls, i-1, i)

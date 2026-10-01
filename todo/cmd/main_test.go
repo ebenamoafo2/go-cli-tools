@@ -64,15 +64,26 @@ func TestTodoCLI(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		expected := task + "\n"
+		expected := fmt.Sprintf("  %d: %s\n", 1, task)
 		if expected != string(out) {
-			t.Errorf("Expected %s, got %s", expected, string(out))
+			t.Errorf("Expected %q, got %q instead\n", expected, string(out))
 		}
 	})
 	t.Run("CompleteTask", func(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-complete", "1")
 		if err := cmd.Run(); err != nil {
 			t.Fatal(err)
+		}
+	})
+	t.Run("ListAfterComplete", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, "-list")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatal(err)
+		}
+		expected := "All tasks completed\n"
+		if expected != string(out) {
+			t.Errorf("Expected %q, got %q instead\n", expected, string(out))
 		}
 	})
 }
